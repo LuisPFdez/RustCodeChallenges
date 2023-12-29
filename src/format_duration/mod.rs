@@ -4,6 +4,20 @@ fn format_duration(seconds: u64) -> String {
         return String::from("now");
     }
 
+    let insert_funtion = |remainder: u64, result: &mut String, name: (&str, &str)| -> () {
+        if remainder > 0 {
+            if result.len() != 0 {
+                result.insert_str(0, ", ");
+            }
+
+            if remainder == 1 {
+                result.insert_str(0, &format!("{} {}", remainder, name.0))
+            } else {
+                result.insert_str(0, &format!("{} {}", remainder, name.1))
+            }
+        }
+    };
+
     let mut result = String::new();
 
     let operations: [(u16, (&str, &str)); 4] = [
@@ -21,30 +35,10 @@ fn format_duration(seconds: u64) -> String {
         remainder = current_value % divider as u64;
         current_value = current_value / divider as u64;
 
-        if remainder > 0 {
-            if result.len() != 0 {
-                result.insert_str(0, ", ");
-            }
-
-            if remainder == 1 {
-                result.insert_str(0, &format!("{} {}", remainder, name.0))
-            } else {
-                result.insert_str(0, &format!("{} {}", remainder, name.1))
-            }
-        }
+        insert_funtion(remainder, &mut result, name);
     }
 
-    if current_value > 0 {
-        if result.len() != 0 {
-            result.insert_str(0, ", ");
-        }
-
-        if current_value == 1 {
-            result.insert_str(0, &format!("{} {}", current_value, last_name.0))
-        } else {
-            result.insert_str(0, &format!("{} {}", current_value, last_name.1))
-        }
-    }
+    insert_funtion(current_value, &mut result, last_name);
 
     return match result.rfind(",") {
         Some(index) => {
