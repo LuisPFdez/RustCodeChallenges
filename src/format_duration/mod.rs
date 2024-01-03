@@ -20,25 +20,26 @@ fn format_duration(seconds: u64) -> String {
 
     let mut result = String::new();
 
-    let operations: [(u16, (&str, &str)); 4] = [
+    let operations: [(u16, (&str, &str)); 5] = [
         (60, ("second", "seconds")),
         (60, ("minute", "minutes")),
         (24, ("hour", "hours")),
         (365, ("day", "days")),
+        (1, ("year", "years"))
     ];
-    let last_name = ("year", "years");
+    
     let mut current_value: u64 = seconds;
 
     let mut remainder: u64;
 
-    for (divider, name) in operations {
+    for (divider, name) in operations.into_iter().take(operations.len() - 1) {
         remainder = current_value % divider as u64;
         current_value = current_value / divider as u64;
 
         insert_funtion(remainder, &mut result, name);
     }
 
-    insert_funtion(current_value, &mut result, last_name);
+    insert_funtion(current_value, &mut result, operations.last().unwrap().1);
 
     return match result.rfind(",") {
         Some(index) => {
